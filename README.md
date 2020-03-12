@@ -54,7 +54,7 @@ To look up a document the *docId* is needed. Once a *docId* is known a node can 
 
 ## Document log
 
-A Ceramic document is made up of an append-only log that can be reduced to a single json object. Each record in the log is an [IPLD](https://ipld.io) object that can be referenced by its [CID](https://github.com/multiformats/cid). Since CIDs are unique identifiers based on the contents of the object we can create a linked list where each record contains a `next` pointer to the previous entry in the log. This makes the log an immutable history of records. There might however be different branches of a log. To deal with this, a [conflict resolution](#conflict-resolution)strategy that uses blockchain anchoring is used. Each record in the log is of a certain type: genesis, signed, and anchor. The genesis record is the first record of a document. Anchor records anchor a document to a blockchain. Signed records contain updates to the document. The structure of these records is described in the [Document records](#document-records) section below.
+A Ceramic document is made up of an append-only log that can be reduced to a single json object. Each record in the log is an [IPLD](https://ipld.io) object that can be referenced by its [CID](https://github.com/multiformats/cid). Since CIDs are unique identifiers based on the contents of the object we can create a linked list where each record contains a `next` pointer to the previous entry in the log. This makes the log an immutable history of records. There might however be different branches of a log. To deal with this, a [conflict resolution](#conflict-resolution) strategy that uses blockchain anchoring is used. Each record in the log is of a certain type: genesis, signed, and anchor. The genesis record is the first record of a document. Anchor records anchor a document to a blockchain. Signed records contain updates to the document. The structure of these records is described in the [Document records](#document-records) section below.
 
 ### Blockchain anchoring
 
@@ -82,7 +82,7 @@ It is technically possible, though unlikely, that two document updates get ancho
 
 Records act as the fundamental building block for Ceramic documents. A record is an IPLD object that contains some data and a proof for that data. Each record type provides a method for verifying its proofs. A proof can have many forms but the most common examples are signatures and blockchain anchors.
 
-** TODO : ** [Insert diagram showing Genesis > Signed > Anchor > Signed > Anchor > Signed > Anchor] as an example doctype that uses both signatures and anchor proofs.]
+** TODO: [Insert diagram showing Genesis > Signed > Anchor > Signed > Anchor > Signed > Anchor] as an example doctype that uses both signatures and anchor proofs.
 
 #### Genesis record
 
@@ -196,9 +196,9 @@ If a node that has been offline comes back online it will have to make a request
 
 ### Future improvements
 
-The main concern reason for having one pubsub topic that all documents are shared within is to more easily create a well connected network. The benefit of this is that you can get updates from nodes interested in the same document, even if not directly connected to them. The main drawback of this approach is scalability. Once the network grows the amount of documents and messages in the pubsub topic will be to large for many nodes. In order to deal with this the documents can be split into multiple different rooms using some form of namespaceing based on *docId*. Exactly how this looks like is not yet determined.
+The main reason for having one pubsub topic that all documents are shared within is to more easily create a well connected network. The benefit of this is that you can get updates from nodes interested in the same document, even if not directly connected to them. The main drawback of this approach is scalability. Once the network grows the amount of documents and messages in the pubsub topic will be to large for many nodes. In order to deal with this the documents can be split into multiple different rooms using some form of namespaceing based on *docId*. Exactly how this looks like is not yet determined.
 
-A potential problem with the pubsub approach is some form of DoS. When a node makes a request for a specific document a malicious actor could send a lot of heads that does not correspond to the requested document. This would result in the requesting node having to do a lot of computation to make sure all of the received heads are infact not correct. There are a few different way to solve this. One is to use a tit-for-tat system where nodes disconnect from nodes that send many incorrect responses. If many users do this it should effectively block malicious nodes as they start donig an attack. A different approach is to include a zero-knowledge proof in the response that prooves that the CID in the message indeed does correspond to the correct document.
+A potential problem with the pubsub approach is some form of DoS. When a node makes a request for a specific document a malicious actor could send a lot of heads that do not correspond to the requested document. This would result in the requesting node having to do a lot of computation to make sure all of the received heads are infact not correct. There are a few different way to solve this. One is to use a tit-for-tat system where nodes disconnect from nodes that send many incorrect responses. If many users do this it should effectively block malicious nodes as they start donig an attack. A different approach is to include a zero-knowledge proof in the response that prooves that the CID in the message indeed does correspond to the correct document.
 
 ## Ceramic services
 
@@ -206,7 +206,7 @@ The `policy` doctype can be used to descibe services that are made available tho
 
 ### Anchor service
 
-As mentioned in the [Blockchain anchoring](#blockchain-anchoring) section there is a need for a blockchain anchoring service that alleviates the need for users to make a blockchain transaction for each of their document update. Instead a ceramic node can rely on an anchoring service that receives anchor requests and on a regular interval batches these requests into a single transaction. This service can be run by anyone, and it's possible to configure which anchoring service to use in the ceramic node by specifying a **Service policy** in the configuration file. Different services might offer anchors to different blockchains and depending on the context one blockchain might be prefered to another.
+As mentioned in the [Blockchain anchoring](#blockchain-anchoring) section there is a need for a blockchain anchoring service that alleviates the need for users to make a blockchain transaction for each of their document updates. Instead a ceramic node can rely on an anchoring service that receives anchor requests and on a regular interval batches these requests into a single transaction. This service can be run by anyone, and it's possible to configure which anchoring service to use in the ceramic node by specifying a **Service policy** in the configuration file. Different services might offer anchors to different blockchains and depending on the context one blockchain might be prefered to another.
 
 ### Other services
 
