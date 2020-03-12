@@ -111,7 +111,7 @@ This is an example of how the service policy for the Ceramic anchoring service c
 
 ### Privacy policy
 
-A **Privacy policy** allows the user to specify their database instances in a specific *collection* and set special access control rights for these databases. In it the *source *****of the data, i.e. the **Hosting policy**, ****is set which contains the information about where data is backed up. A user can of course set multiple *sources* for a given *collection* for redundant backups, or even change where data is being hosted.
+A **Privacy policy** allows the user to specify their database instances in a specific *collection* and set special access control rights for these databases. In it the *source* of the data, i.e. the **Hosting policy**, is set which contains the information about where data is backed up. A user can of course set multiple *sources* for a given *collection* for redundant backups, or even change where data is being hosted.
 
 If the user wants to remove some database this can also be done in the **Privacy policy** which contains the history of all databases that have been created and removed.
 
