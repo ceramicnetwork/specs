@@ -25,11 +25,7 @@ This repository contains the technical specifications for the Ceramic protocol. 
     - [Other Services](#other-services)
 - [Implementations](#implementations)
 
-## Abstract
-
-Ceramic is a protocol for an interoperable, user-centric web powered by self-sovreign identities and policies. Ceramic brings interoperability to various permissionless infrastructures by providing an identity, routing, and access control system built using tamper-resistant, append-only documents stored on IPFS and anchored into one or more blockchain for consensus.
-
-*For a non-technical introduction to the Ceramic network, see [the overview](https://github.com/ceramicnetwork/ceramic/blob/master/OVERVIEW.md).*
+> *For a non-technical introduction to the Ceramic network, see [the overview](https://github.com/ceramicnetwork/ceramic/blob/master/OVERVIEW.md).*
 
 ## Protocol overview
 
