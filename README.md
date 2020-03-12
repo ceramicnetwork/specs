@@ -1,4 +1,4 @@
-# Ceramic Specifications
+# Ceramic Protocol Specification
 
 > This repository contains the technical specifications for the Ceramic protocol. It also contains some example applications that can be built on top of it. *For a non-technical introduction to the Ceramic network, see [Ceramic Overview](https://github.com/ceramicnetwork/ceramic/blob/master/OVERVIEW.md).*
 
