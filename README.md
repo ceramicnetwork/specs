@@ -217,3 +217,6 @@ Using Ceramic [Service policies](./doctypes/policy.md#service-policy) almost any
 Currently there is a partial Typescript ([js-ceramic](https://github.com/ceramicnetwork/js-ceramic)) reference implementation available. If you're interested in contributing an implementation in another language [please reach out](mailto:core@ceramic.network) and we'll help you get started!
 
 
+## Continue
+
+### [Ceramic JavaScript Client  >](https://github.com/ceramicnetwork/js-ceramic)
