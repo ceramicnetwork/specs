@@ -25,16 +25,18 @@ The DID standard encodes DID strings differently from Ceramic identifiers. A 3ID
 
 The genesis record should contain three public keys. `management`, `signing`, and `encryption`. All of these keys are encoded using [multicodec](https://github.com/multiformats/multicodec). The first two keys are used for signatures and use the secp256k1 curve. The encyrption key uses the x25519 curve. The `management` key is used for signing updates to the 3ID document. The `signing` key is the main authentication key of the DID, and the `encryption` key is used by others to encrypt messages to this DID. There can also be additional content in the 3ID genesis record, as long as the `management` key is set. The 3ID genesis records are stored in IPFS using the [`dag-cbor`](https://github.com/ipld/js-ipld-dag-cbor/) IPLD format.
 
-    {
-      "doctype": "3id",
-      "content": {
-        "publicKeys": {
-          "management": <secp256k1-public-key>,
-          "signing": <secp256k1-public-key>,
-          "encryption": <x25519-public-key>
-        }
-      }
+```JSON
+{
+  "doctype": "3id",
+  "content": {
+    "publicKeys": {
+      "management": <secp256k1-public-key>,
+      "signing": <secp256k1-public-key>,
+      "encryption": <x25519-public-key>
     }
+  }
+}
+```
 
 For backwards compatibility reasons documents created with [js-ipfs-did-document](https://github.com/3box/js-ipfs-did-document/) can also be used as a 3ID genesis record, given that it has the `managementKey`, `signingKey`, and `encryptionKey` properties set.
 
@@ -42,10 +44,12 @@ For backwards compatibility reasons documents created with [js-ipfs-did-document
 
 Signed records in 3ID are stored in IPFS using the `dag-jose` or `dag-cose` formats. These formats allow for IPLD objects to be stored along with a standardized signature format. They also allow DAG objects to be encrypted. The update to the document is encoded using [json-patch](https://github.com/Starcounter-Jack/JSON-Patch).
 
-    {
-      "next": <CID-previous-record>,
-      "content": <JSON-patch-object>
-    }
+```JSON
+{
+  "next": <CID-previous-record>,
+  "content": <JSON-patch-object>
+}
+```
 
 ## Update rules
 
@@ -59,19 +63,19 @@ The [DID specification](https://w3c.github.io/did-core/) describes what a DID do
 
 The example below is the `content` of a typical 3ID document. The `collection` property contains *Collection Policies* as keys and *Privacy Policies* as values. The former is a description of a data set, usually created by an application, and the latter is the users own settings for this collection, such as specific database references and where they are hosted. In the `accountLinks` property any account-link documents that link blockchain accounts to this 3ID can be found.
 
-    {
-      "publicKeys": {
-        "management": <secp256k1-public-key>,
-        "signing": <secp256k1-public-key>,
-        "encryption": <x25519-public-key>
-      },
-      "collections": {
-        "/ceramic/policy/bafy11111...": "/ceramic/policy/bafyaaaaa...",
-        "/ceramic/policy/bafy22222...": "/ceramic/policy/bafybbbbb..."
-      },
-      "accountLinks": [
-        "/ceramic/account-link/bafy00000..."
-      ]
-    }
-
-
+```JSON
+{
+  "publicKeys": {
+    "management": <secp256k1-public-key>,
+    "signing": <secp256k1-public-key>,
+    "encryption": <x25519-public-key>
+  },
+  "collections": {
+    "/ceramic/policy/bafy11111...": "/ceramic/policy/bafyaaaaa...",
+    "/ceramic/policy/bafy22222...": "/ceramic/policy/bafybbbbb..."
+  },
+  "accountLinks": [
+    "/ceramic/account-link/bafy00000..."
+  ]
+}
+```
