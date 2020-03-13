@@ -40,6 +40,8 @@ A Ceramic document consists of an append-only log where updates are signed then 
 
 Every document in the Ceramic network is self-contained and the lifecycle of all documents can be broadly described in the same way. There are three main actions that can happen to a document: *create*, *update*, and *lookup*.
 
+![Document datastructure](./images/document-datastructure.png)
+
 ### Creating a document
 
 To create a document an IPLD object that contains the initial content of the document is created. This is called the [genesis record](#genesis-record), and its [CID](https://github.com/multiformats/cid) is used as the document identifier (docId). Depending on the document type there might be constraints about what is considered valid content for the genesis record.
@@ -81,8 +83,6 @@ It is technically possible, though unlikely, that two document updates get ancho
 ### Document records
 
 Records act as the fundamental building block for Ceramic documents. A record is an IPLD object that contains some data and a proof for that data. Each record type provides a method for verifying its proofs. A proof can have many forms but the most common examples are signatures and blockchain anchors.
-
-** TODO: [Insert diagram showing Genesis > Signed > Anchor > Signed > Anchor > Signed > Anchor] as an example doctype that uses both signatures and anchor proofs.
 
 #### Genesis record
 
@@ -129,6 +129,8 @@ The format of the proof metadata object can be seen below. `Chain` is a unique i
   root: <CID-merkle-tree-root>
 }
 ```
+
+![Anchor record](./images/anchor-record.png)
 
 To verify a specific anchor record the following algorithm:
 
