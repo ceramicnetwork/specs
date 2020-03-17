@@ -10,9 +10,9 @@ Tiles are a flexible way to create single or multi-party statements and can be u
 - [Signed record](#signed-record)
 - [Update rules](#update-rules)
 - [Examples](#examples)
-    - [Collection tile](#collection-tile)
-    - [Service tile](#service-tile)
-    - [Privacy tile](#privacy-tile)
+    - [Collection Policy](#collection-policy)
+    - [Service Policy](#service-policy)
+    - [Privacy Policy](#privacy-policy)
 
 ## Genesis record
 
@@ -47,11 +47,11 @@ An update to a tile can change anything in the `content` of the tile document. I
 
 ## Examples
 
-Below there are three examples of possible tiles, Collection, Service, and Privacy tiles. These tiles in particular are useful when specifying a user cenrtic data storage system.
+Below there are three examples of possible tiles, Collection Policy, Service Policy, and Privacy Policy. These tiles in particular are useful when specifying a user cenrtic data storage system.
 
-### Collection tile
+### Collection Policy
 
-The **Collection tile** represents a *collection* of data, or rather a *collection* of databases that has specific schemas. This tile also contain tags which describe what type of data is being stored within the collection.
+The **Collection Policy tile** represents a *collection* of data, or rather a *collection* of databases that has specific schemas. This tile also contain tags which describe what type of data is being stored within the collection.
 
 **Example:**
 
@@ -76,9 +76,9 @@ The **Collection tile** represents a *collection* of data, or rather a *collecti
 }
 ```
 
-### Service tile
+### Service Policy
 
-A **Service tile** is used to describe a simple service, usually in the form of a function that takes an input and produces an output. But could also describe more complex services such as database hosting etc.
+A **Service Policy tile** is used to describe a simple service, usually in the form of a function that takes an input and produces an output. But could also describe more complex services such as database hosting etc.
 
 **Example:**
 
@@ -103,11 +103,11 @@ This is an example of how the service tile for the Ceramic anchoring service cou
 }
 ```
 
-### Privacy tile
+### Privacy Policy
 
-A **Privacy tile** allows the user to specify their database instances in a specific *collection* and set special access control rights for these databases. In it the *source* of the data, i.e. the **Service tile** that provides a hosting service, is set which contains the information about where data is backed up. A user can of course set multiple *sources* for a given *collection* for redundant backups, or even change where data is being hosted.
+A **Privacy Policy tile** allows the user to specify their database instances in a specific *collection* and set special access control rights for these databases. In it the *source* of the data, i.e. the **Service Policy tile** that provides a hosting service, is set which contains the information about where data is backed up. A user can of course set multiple *sources* for a given *collection* for redundant backups, or even change where data is being hosted.
 
-If the user wants to remove some database this can also be done in the **Privacy tile** which contains the history of all databases that have been created and removed.
+If the user wants to remove some database this can also be done in the **Privacy Policy tile** which contains the history of all databases that have been created and removed.
 
 **Example:**
 
