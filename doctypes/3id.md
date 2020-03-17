@@ -62,7 +62,7 @@ The [DID specification](https://w3c.github.io/did-core/) describes what a DID do
 
 ## Example
 
-The example below is the `content` of a typical 3ID document. The `collection` property contains an array of  **Collection Tiles** and **Privacy Tiles**. The former is a description of a data set, usually created by an application, and the latter is the users own settings for a collection, such as specific database references and where they are hosted. In the `accountLinks` property any account-link documents that link blockchain accounts to this 3ID can be found.
+The example below is the `content` of a typical 3ID document. The `collection` property contains an array of  [Collection Policy Tile](./doctypes/tile.md#collection-policy) and [Privacy Policy Tile](./doctypes/tile.md#privacy-policy). The former is a description of a data set, usually created by an application, and the latter is the users own settings for a collection, such as specific database references and where they are hosted. In the `accountLinks` property any account-link documents that link blockchain accounts to this 3ID can be found.
 
 ```JSON
 {
