@@ -13,13 +13,13 @@
     - [Creating a document](#creating-a-document)
     - [Updating a document](#updating-a-document)
     - [Looking up a document](#looking-up-a-document)
+- [Document Identifiers](#document-identifiers)
 - [Document log](#document-log)
     - [Blockchain anchoring](#blockchain-anchoring)
     - [Conflict resolution](#conflict-resolution)
     - [Document records](#document-records)
 - [Document types](#document-types)
     - [Doctypes in Ceramic](#doctypes-in-ceramic)
-    - [Document Identifiers](#document-identifiers)
     - [Update rules](#update-rules)
 - [Document update propagation](#document-update-propagation)
     - [Queries](#queries)
@@ -54,6 +54,20 @@ In order to update a document two records need to be added. These updates are ad
 
 To look up a document the *docId* is needed. Once a *docId* is known a node can look up a document by sending a lookup request to the [ceramic pubsub topic](#document-update-propagation). Other nodes that has the state of this document will respond with the latest record CID that they know of. The node making the lookup now resolves the document log of all of the CIDs that it receives (in most cases this will only be one CID). If there are any conflicts they will be resolved by the [conflict resolution mechanism](#conflict-resolution). Once any conflicts are resolved all the updates from the signed records are applied to the genesis record and the latest state of the document is found.
 
+## Document Identifiers
+
+In Ceramic, each document has a unique identifier (docId). The identifier is a string with the following format:
+
+```
+/ceramic/<CID-of-genesis-record>
+```
+
+For example, a docId might look like this:
+
+```
+/ceramic/bafyreihl3rizxqjkedmp7rdckrqd3kufwe5e7c6xejcoheqo7rp63idsva
+```
+
 ## Document log
 
 A Ceramic document is made up of an append-only log that can be reduced to a single json object. Each record in the log is an [IPLD](https://ipld.io) object that can be referenced by its [CID](https://github.com/multiformats/cid). Since CIDs are unique identifiers based on the contents of the object we can create a linked list where each record contains a `next` pointer to the previous entry in the log. This makes the log an immutable history of records. There might however be different branches of a log. To deal with this, a [conflict resolution](#conflict-resolution) strategy that uses blockchain anchoring is used. Each record in the log is of a certain type: genesis, signed, and anchor. The genesis record is the first record of a document. Anchor records anchor a document to a blockchain. Signed records contain updates to the document. The structure of these records is described in the [Document records](#document-records) section below.
@@ -72,7 +86,7 @@ It is important to note that an update might have an earlier anchor record but n
 
 One suggested attack on this conflict resolution system is a data witholding attack. In this scenario a user creates a document, makes two conflicting updates and anchors one of them earlier than the other, but only publishes the data of the update that was anchored later. Now subsequent updates to the document will be made on top of the second, published update. Every observer will accept these updates as valid since they have not seen the first update. However if the user later publishes the data of the earlier update all of the other updates made to the document will be invalidated.
 
-This is essentially a *double spend attack* which is the problem that blockchains solve. However since identities have only one owner, the user, this is less of a problem. In this case, a "double spend" would cause the user to lose all history and associations that have accrued on their identity, which they are naturally disincentivized to do. Similarly for policy documents signed by multiple parties, since all parties need to sign all updates they all would need to all be aware of the data withholding attack.
+This is essentially a *double spend attack* which is the problem that blockchains solve. However since identities have only one owner, the user, this is less of a problem. In this case, a "double spend" would cause the user to lose all history and associations that have accrued on their identity, which they are naturally disincentivized to do. Similarly for tile documents signed by multiple parties, since all parties need to sign all updates they all would need to all be aware of the data withholding attack.
 
 In the case of organizational identities this is more of a problem, e.g. if an old admin of the org wants to cause trouble. This can be solved by introducing "heavy anchors" which rely more heavily on some on-chain mechanism. For example, a smart contract or a DAO that controls the identity.
 
@@ -86,12 +100,13 @@ Records act as the fundamental building block for Ceramic documents. A record is
 
 #### Genesis record
 
-The genesis record is the first record of the document. It only has two properties, `doctype` and `content`. The *doctype* is a string which describes which doctype this document has, and the *genesis* property contains the content of the document at the time of creation. The genesis record doesn't specify a proof.
+The genesis record is the first record of the document. It has three properties, `doctype`, `owners`, and `content`. The *doctype* is a string which describes the doctype of this document. *owners* is a property that has an array of strings which represent the document owner(s). Finally the *genesis* property contains the content of the document at the time of creation. The genesis record doesn't specify a proof.
 
 ```js
 {
-  doctype: <doctype-string>,
-  content: <content>
+  "doctype": <doctype-string>,
+  "owners": [<owner-id-string>],
+  "content": <content>
 }
 ```
 
@@ -101,8 +116,8 @@ Signed records contain a pointer to the previous record as `next`, a patch conta
 
 ```js
 {
-  next: <CID-of-previous-record>,
-  content: <content-update>
+  "next": <CID-of-previous-record>,
+  "content": <content-update>
 }
 ```
 
@@ -151,21 +166,12 @@ Every Ceramic document has to specify a document type (doctype). The doctype des
 There are currently three main doctypes specified by Ceramic, but more can be added in the future if needed.
 
 - [3id](./doctypes/3id.md) - Self-sovereign identities using the DID standard
-- [policy](./doctypes/policy.md) - Policy documents used to describe services, access control, etc.
+- [tile](./doctypes/tile.md) - Tile documents used to describe services, schemas, access control, etc.
 - [account-link](./doctypes/account-link.md) - Links from blockchain addresses to DIDs
-
-### Document Identifiers
-
-In Ceramic, each document has a unique identifier (docId). The identifier is a string with the following format:
-
-`/ceramic/<doctype>/<CID-of-genesis-record>`
-
-For example, the docId of a 3id document might look like this:
-`/ceramic/3id/bafyreihl3rizxqjkedmp7rdckrqd3kufwe5e7c6xejcoheqo7rp63idsva`
 
 ### Update rules
 
-Each doctype needs to specify rules for what constitutes valid updates and valid sequences of log records. For example, the *3id* doctype only allows the user to add or remove document properties if the records are signed by the *managementKey* of the 3id, while the *policy* doctype  is more flexible and might require signatures from multiple parties. The doctype may also specify the required data format for the content of the given document. For example, the *address-link* doctype only allows one DID as its content.
+Each doctype needs to specify rules for what constitutes valid updates and valid sequences of log records. For example, the *3id* doctype only allows the user to add or remove document properties if the records are signed by the *management key* of the 3id, while the *tile* doctype is more flexible and might require signatures from multiple parties. The doctype may also specify the required data format for the content of the given document. For example, the *address-link* doctype only allows one DID as its content.
 
 ## Document update propagation
 
@@ -204,15 +210,15 @@ A potential problem with the pubsub approach is some form of DoS. When a node ma
 
 ## Ceramic services
 
-The `policy` doctype can be used to descibe services that are made available though through the Ceramic network. A service provider creates a policy document that includes the description of the api that can be used to reach the service (e.g. http api, libp2p protocol, etc). The policy document may also include payment information, i.e. if some form of payment is needed in order to use the service. Ceramic enables many types of services, but the main focus of this document is the *anchor service* which is required for a ceramic node to be able to make updates a document. Please see the Ceramic [Use Cases](https://github.com/ceramicnetwork/ceramic/blob/master/OVERVIEW.md) for descriptions of other services.
+The `tile` doctype can be used to descibe services that are made available though through the Ceramic network. A service provider creates a tile document that includes the description of the api that can be used to reach the service (e.g. http api, libp2p protocol, etc). The tile document may also include payment information, i.e. if some form of payment is needed in order to use the service. Ceramic enables many types of services, but the main focus of this document is the *anchor service* which is required for a ceramic node to be able to make updates a document. Please see the Ceramic [Use Cases](https://github.com/ceramicnetwork/ceramic/blob/master/OVERVIEW.md) for descriptions of other services.
 
 ### Anchor service
 
-As mentioned in the [Blockchain anchoring](#blockchain-anchoring) section there is a need for a blockchain anchoring service that alleviates the need for users to make a blockchain transaction for each of their document updates. Instead a ceramic node can rely on an anchoring service that receives anchor requests and on a regular interval batches these requests into a single transaction. This service can be run by anyone, and it's possible to configure which anchoring service to use in the ceramic node by specifying a **Service policy** in the configuration file. Different services might offer anchors to different blockchains and depending on the context one blockchain might be prefered to another.
+As mentioned in the [Blockchain anchoring](#blockchain-anchoring) section there is a need for a blockchain anchoring service that alleviates the need for users to make a blockchain transaction for each of their document updates. Instead a ceramic node can rely on an anchoring service that receives anchor requests and on a regular interval batches these requests into a single transaction. This service can be run by anyone, and it's possible to configure which anchoring service to use in the ceramic node by specifying a **Service tile** in the configuration file. Different services might offer anchors to different blockchains and depending on the context one blockchain might be prefered to another.
 
 ### Other services
 
-Using Ceramic [Service policies](./doctypes/policy.md#service-policy) almost any type of services can be represented. Some examples of this include Payments, Data hosting, Indexing, etc. Adding a service to ceramic allows it to be used in a user centric way. Services can be enabled per user and apps can route to different services though the users identity.
+Using Ceramic [Service tiles](./doctypes/tile.md#service-tile) almost any type of services can be represented. Some examples of this include Payments, Data hosting, Indexing, etc. Adding a service to ceramic allows it to be used in a user centric way. Services can be enabled per user and apps can route to different services though the users identity.
 
 ## Implementations
 
