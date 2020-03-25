@@ -49,6 +49,40 @@ An update to a tile can change anything in the `content` of the tile document. I
 
 Below there are three examples of possible tiles, Collection Policy, Service Policy, and Privacy Policy. These tiles in particular are useful when specifying a user cenrtic data storage system.
 
+### Metatag
+A **metatag tile** is a simple type of tile that can be used to associate metadata with an identity. A query for the metadata only requires knowledge of the metatag and the identity. 
+
+**Example 1:**
+
+The example below is the genesis record of the metatag *profile*. When the genesis record is created it contains no additional information. This means that anyone can recreate the genesis record and sync updates for this tile.
+
+```JSON
+{
+  "doctype": "tile",
+  "owners": ["did:3:bafyuser..."],
+  "content": {
+    "metatag": "profile"
+  }
+}
+```
+
+**Example 2:**
+
+An updated version of the tile described above. Now additional data is added.
+
+```JSON
+{
+  "doctype": "tile",
+  "owners": ["did:3:bafyuser..."],
+  "content": {
+    "metatag": "profile",
+    "name": "Joel",
+    "image": <CID>
+  }
+}
+```
+
+
 ### Collection Policy
 
 The **Collection Policy tile** represents a *collection* of data, or rather a *collection* of databases that has specific schemas. This tile also contain tags which describe what type of data is being stored within the collection.
