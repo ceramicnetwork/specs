@@ -18,7 +18,7 @@ Tiles are a flexible way to create single or multi-party statements and can be u
 
 **Doctype name:** `tile`
 
-The genesis record of a tile document is quite flexible. The `content` property contains the data of the tile and can be set to any json data. The `owners` property must contain an array of DIDs (at least one). It specifies the `owners` who are allowed to update the document (note that a signature from all the owners is needed in order to make a valid update to a tile). In the example below the 3ID DID method is used, but Ceramic can support other DID methods as well.
+The genesis record of a tile document is quite flexible. The `content` property contains the data of the tile and can be set to any json data. The `owners` property must contain an array of DIDs (at least one). It specifies the `owners` who are allowed to update the document (note that a signature from all the owners is needed in order to make a valid update to a tile). In the example below the 3ID DID method is used, but Ceramic can support other DID methods as well. As opposed to the `3id` and `account-link` doctypes the genesis record of a `tile` is signed by the DID specified in `owners`.
 
 Tile genesis records are stored in IPFS using the [`dag-cbor`](https://github.com/ipld/js-ipld-dag-cbor/) IPLD format.
 
