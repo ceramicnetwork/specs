@@ -171,7 +171,7 @@ There are currently three main doctypes specified by Ceramic, but more can be ad
 
 ### Update rules
 
-Each doctype needs to specify rules for what constitutes valid updates and valid sequences of log records. For example, the *3id* doctype only allows the user to add or remove document properties if the records are signed by the *management key* of the 3id, while the *tile* doctype is more flexible and might require signatures from multiple parties. The doctype may also specify the required data format for the content of the given document. For example, the *address-link* doctype only allows one DID as its content.
+Each doctype needs to specify rules for what constitutes valid updates and valid sequences of log records. For example, the *3id* doctype only allows the user to add or remove document properties if the records are signed by the *management key* of the 3id, while the *tile* doctype is more flexible and might require signatures from multiple parties. The doctype may also specify the required data format for the content of the given document. For example, the *account-link* doctype only allows one DID as its content.
 
 ## Document update propagation
 
