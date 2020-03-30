@@ -202,6 +202,36 @@ A node can also query other nodes for the latest head of a particular document. 
 
 If a node that has been offline comes back online it will have to make a request for all the documents it's interested in to make sure it has all the latest updates.
 
+#### Advanced queries
+Documents may contain links to other documents. In some cases it's desirable to query a particular document within a given document. The eqample query below would return three CIDs: one for the docId head, one for the document within the settings poperty, and one document from within this document.
+
+**Request message format:**
+```js
+{
+  typ: 1,
+  id: <docId>/settings/keyring
+}
+```
+
+The response for the above query would include `docId` and `head` of the linked documents that where traversed.
+
+**Update message format:**
+
+```js
+{
+  typ: 0,
+  id: <docId>/settings/keyring,
+  cid: <docId-head-CID>,
+  linked: [{
+    docId: <settings-docId>,
+    head: <settings-head-CID>
+  }, {
+   docId: <keyring-docId>,
+   head:<keyring-head-CID>
+  }]
+}
+```
+
 ### Future improvements
 
 The main reason for having one pubsub topic that all documents are shared within is to more easily create a well connected network. The benefit of this is that you can get updates from nodes interested in the same document, even if not directly connected to them. The main drawback of this approach is scalability. Once the network grows the amount of documents and messages in the pubsub topic will be to large for many nodes. In order to deal with this the documents can be split into multiple different rooms using some form of namespaceing based on *docId*. Exactly how this looks like is not yet determined.
