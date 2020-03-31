@@ -26,7 +26,7 @@ Account-link genesis records are stored in IPFS using the [`dag-cbor`](https://g
 ```JSON
 {
   "doctype": "account-link",
-  "owners": [<account-id>]
+  "owners": [<caip-10-account-id>]
 }
 ```
 
@@ -45,7 +45,8 @@ Account-link signed records are stored in IPFS using the [`dag-cbor`](https://gi
 
 ## Update rules
 
-An account link can only link from one account to one 3ID. Any update that violates this (and thus has an invalid proof) will not be accepted. All signatures need to be signed by the account specified in the `owners` property. The `owners` property can not be changed.
+An account link can only link from one account to one 3ID. Any update that violates this (and thus has an invalid proof) will not be accepted. All signatures need to be signed by the account specified in the `
+` property. The `owners` property can not be changed.
 
 ## Examples
 
