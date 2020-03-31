@@ -54,7 +54,7 @@ When resolving an account-link that is linked to a 3ID the result looks like the
 ### Ethereum account-link
 ```JSON
 {
-  "owners": ["0xab16a96d359ec26a11e2c2b3d8f8b8942d5bfcdb"],
+  "owners": ["0xab16a96d359ec26a11e2c2b3d8f8b8942d5bfcdb@eip155:1"],
   "content": "did:3:bafyreiecedg6ipyvwdwycdjiakhj5hiuuutxlvywtkvckwvsnu6pjbwxae"
 }
 ```
@@ -62,7 +62,7 @@ When resolving an account-link that is linked to a 3ID the result looks like the
 ### Polkadot account-link
 ```JSON
 {
-  "owners": ["5hmuyxw9xdgbpptgypokw4thfyoe3ryenebr381z9iaegmfy"],
+  "owners": ["5hmuyxw9xdgbpptgypokw4thfyoe3ryenebr381z9iaegmfy@polkadot:polkadot-chain"],
   "content": "did:3:bafyreiecedg6ipyvwdwycdjiakhj5hiuuutxlvywtkvckwvsnu6pjbwxae"
 }
 ```
@@ -70,7 +70,7 @@ When resolving an account-link that is linked to a 3ID the result looks like the
 ### Cosmos account-link
 ```JSON
 {
-  "owners": ["cosmos1t2uflqwqe0fsj0shcfkrvpukewcw40yjj6hdc0"],
+  "owners": ["cosmos1t2uflqwqe0fsj0shcfkrvpukewcw40yjj6hdc0@cosmos:cosmoshub-3"],
   "content": "did:3:bafyreiecedg6ipyvwdwycdjiakhj5hiuuutxlvywtkvckwvsnu6pjbwxae"
 }
 ```
@@ -78,7 +78,7 @@ When resolving an account-link that is linked to a 3ID the result looks like the
 ### Bitcoin account-link
 ```JSON
 {
-  "owners": ["128Lkh3S7CkDTBZ8W7BbpsN3YYizJMp8p6"],
+  "owners": ["128Lkh3S7CkDTBZ8W7BbpsN3YYizJMp8p6@bip122:000000000019d6689c085ae165831e93"],
   "content": "did:3:bafyreiecedg6ipyvwdwycdjiakhj5hiuuutxlvywtkvckwvsnu6pjbwxae"
 }
 ```
