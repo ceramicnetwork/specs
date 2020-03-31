@@ -19,7 +19,7 @@ Account links publicly associate a 3ID to other public identities, such as publi
 
 **Doctype name:** `account-link`
 
-An account-link genesis record is very simple. It only contains the account id (CAIP-10 complaint) of the account that is being linked. In most cases this is a blockchain address, such as an ethereum, or bitcoin address. The account id is stored in the `owners` property as one string in an array.
+An account-link genesis record is very simple. It only contains the account id ([CAIP-10](https://github.com/ChainAgnostic/CAIPs/blob/master/CAIPs/caip-10.md) complaint) of the account that is being linked. In most cases this is a blockchain address, such as an ethereum, or bitcoin address. The account id is stored in the `owners` property as one string in an array.
 
 Account-link genesis records are stored in IPFS using the [`dag-cbor`](https://github.com/ipld/js-ipld-dag-cbor/) IPLD format.
 
