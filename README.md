@@ -56,17 +56,31 @@ To look up a document the *docId* is needed. Once a *docId* is known a node can 
 
 ## Document Identifiers
 
-In Ceramic, each document has a unique identifier (docId). The identifier is a string with the following format:
+In Ceramic, each document has a unique identifier (docId). This is a persistant identifier of the document that never changes. The identifier is a string with the following format:
+
+```
+ceramic://<CID-of-genesis-record>
+```
+
+Sometimes Ceramic identifiers might also be formated as:
 
 ```
 /ceramic/<CID-of-genesis-record>
 ```
 
-For example, a docId might look like this:
+As an example, a docId might look like this:
 
 ```
-/ceramic/bafyreihl3rizxqjkedmp7rdckrqd3kufwe5e7c6xejcoheqo7rp63idsva
+ceramic://bafyreihl3rizxqjkedmp7rdckrqd3kufwe5e7c6xejcoheqo7rp63idsva
 ```
+
+### Document versions
+Each time a document is [anchored on a blockchain](#blockchain-anchoring) with an *anchor record*, a new version of the document is created. Each version of the document can be refered to by using the following format:
+
+```
+ceramic://<CID-of-genesis-record>?version=<CID-of-anchor-record>
+```
+
 
 ## Document log
 
