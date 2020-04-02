@@ -63,7 +63,7 @@ When resolving an account-link that is linked to a 3ID the result looks like the
 ### Polkadot account-link
 ```JSON
 {
-  "owners": ["5hmuyxw9xdgbpptgypokw4thfyoe3ryenebr381z9iaegmfy@polkadot:polkadot-chain"],
+  "owners": ["5hmuyxw9xdgbpptgypokw4thfyoe3ryenebr381z9iaegmfy@polkadot:b0a8d493285c2df73290dfb7e61f870f"],
   "content": "did:3:bafyreiecedg6ipyvwdwycdjiakhj5hiuuutxlvywtkvckwvsnu6pjbwxae"
 }
 ```
