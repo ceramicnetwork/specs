@@ -19,14 +19,14 @@ Account links publicly associate a 3ID to other public identities, such as publi
 
 **Doctype name:** `account-link`
 
-An account-link genesis record is very simple. It only contains the identifier of the account that is being linked. In most cases this is a blockchain address, such as an ethereum, or bitcoin address. In theory it could be any type of identifier that can be associated to a public key, or smart contract. The account address (account identifier) is stored in the `owners` property as one string in an array.
+An account-link genesis record is very simple. It only contains the account id ([CAIP-10](https://github.com/ChainAgnostic/CAIPs/blob/master/CAIPs/caip-10.md) complaint) of the account that is being linked. In most cases this is a blockchain address, such as an ethereum, or bitcoin address. The account id is stored in the `owners` property as one string in an array.
 
 Account-link genesis records are stored in IPFS using the [`dag-cbor`](https://github.com/ipld/js-ipld-dag-cbor/) IPLD format.
 
 ```JSON
 {
   "doctype": "account-link",
-  "owners": [<account-identifier-string>]
+  "owners": [<caip-10-account-id>]
 }
 ```
 
@@ -45,7 +45,8 @@ Account-link signed records are stored in IPFS using the [`dag-cbor`](https://gi
 
 ## Update rules
 
-An account link can only link from one account to one 3ID. Any update that violates this (and thus has an invalid proof) will not be accepted. All signatures need to be signed by the account specified in the `owners` property. The `owners` property can not be changed.
+An account link can only link from one account to one 3ID. Any update that violates this (and thus has an invalid proof) will not be accepted. All signatures need to be signed by the account specified in the `
+` property. The `owners` property can not be changed.
 
 ## Examples
 
@@ -54,7 +55,7 @@ When resolving an account-link that is linked to a 3ID the result looks like the
 ### Ethereum account-link
 ```JSON
 {
-  "owners": ["0xab16a96d359ec26a11e2c2b3d8f8b8942d5bfcdb"],
+  "owners": ["0xab16a96d359ec26a11e2c2b3d8f8b8942d5bfcdb@eip155:1"],
   "content": "did:3:bafyreiecedg6ipyvwdwycdjiakhj5hiuuutxlvywtkvckwvsnu6pjbwxae"
 }
 ```
@@ -62,7 +63,7 @@ When resolving an account-link that is linked to a 3ID the result looks like the
 ### Polkadot account-link
 ```JSON
 {
-  "owners": ["5hmuyxw9xdgbpptgypokw4thfyoe3ryenebr381z9iaegmfy"],
+  "owners": ["5hmuyxw9xdgbpptgypokw4thfyoe3ryenebr381z9iaegmfy@polkadot:b0a8d493285c2df73290dfb7e61f870f"],
   "content": "did:3:bafyreiecedg6ipyvwdwycdjiakhj5hiuuutxlvywtkvckwvsnu6pjbwxae"
 }
 ```
@@ -70,7 +71,7 @@ When resolving an account-link that is linked to a 3ID the result looks like the
 ### Cosmos account-link
 ```JSON
 {
-  "owners": ["cosmos1t2uflqwqe0fsj0shcfkrvpukewcw40yjj6hdc0"],
+  "owners": ["cosmos1t2uflqwqe0fsj0shcfkrvpukewcw40yjj6hdc0@cosmos:cosmoshub-3"],
   "content": "did:3:bafyreiecedg6ipyvwdwycdjiakhj5hiuuutxlvywtkvckwvsnu6pjbwxae"
 }
 ```
@@ -78,7 +79,7 @@ When resolving an account-link that is linked to a 3ID the result looks like the
 ### Bitcoin account-link
 ```JSON
 {
-  "owners": ["128Lkh3S7CkDTBZ8W7BbpsN3YYizJMp8p6"],
+  "owners": ["128Lkh3S7CkDTBZ8W7BbpsN3YYizJMp8p6@bip122:000000000019d6689c085ae165831e93"],
   "content": "did:3:bafyreiecedg6ipyvwdwycdjiakhj5hiuuutxlvywtkvckwvsnu6pjbwxae"
 }
 ```

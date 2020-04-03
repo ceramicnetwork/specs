@@ -32,9 +32,9 @@
 
 ## Protocol overview
 
-Ceramic is a decentralized protocol that enables the creation of tamper resistant updatable documents. This is achieved through a combination of digital signatures and blockchain anchoring. A Ceramic document can be used to represent a self-sovereign identity, a policy for data access control, a verifiable credential, or any agreement between multiple parties. The protocol doesn’t rely on any particular blockchain system, instead it utilizes [IPLD](https://ipld.io) to encode document changes in a hash linked data structure, called a Merkle DAG ([Directed Acyclic Graph](https://en.wikipedia.org/wiki/Directed_acyclic_graph)). Syncing a particular document only requires a user to sync the data of the given document. A node in the Ceramic network can thus choose to *pin* only the documents it cares about. There is no global ledger of documents.
+Ceramic is a decentralized protocol that enables the creation of tamper resistant updatable documents. This is achieved through a combination of digital signatures, specific update rules, and blockchain anchoring. A Ceramic document can be used to represent a self-sovereign identity, a policy for data access control, a verifiable credential, or any agreement between multiple parties. The protocol doesn’t rely on any particular blockchain system, instead it utilizes [IPLD](https://ipld.io) to encode document changes in a hash linked data structure, called a Merkle DAG ([Directed Acyclic Graph](https://en.wikipedia.org/wiki/Directed_acyclic_graph)). Verifying a particular document only requires a user to sync the specific data of the given document. A node in the Ceramic network can thus choose to only *pin* the documents it cares about. This means that there is no global ledger of documents.
 
-A Ceramic document consists of an append-only log where updates are signed then anchored in a blockchain. The protocol is agnostic as to which blockchain is used for anchoring and a document could potentially be anchored in multiple chains. When an update is made to a particular document the nodes in the network gossip about the update and all nodes interested in this update will change the state of the given document. There are multiple different types of documents (doctypes) that have their own rules as to what constitutes valid state transitions when making updates.
+A Ceramic document consists of an append-only log where updates are signed then anchored on a blockchain. There are different types of documents (doctypes). Each doctype specifies rules that govern what a valid update to a document looks like, such as signatures and state transitions. This allows Ceramic nodes to verify the state of a given document in a decentralized way. When an update is made to a particular document the nodes in the network gossip about the update and all nodes interested in this update will change the state of the given document. The protocol is agnostic as to which blockchain is used for anchoring and a document could potentially be anchored in multiple chains.
 
 ## Document lifecycle
 
@@ -56,17 +56,31 @@ To look up a document the *docId* is needed. Once a *docId* is known a node can 
 
 ## Document Identifiers
 
-In Ceramic, each document has a unique identifier (docId). The identifier is a string with the following format:
+In Ceramic, each document has a unique identifier (docId). This is a persistant identifier of the document that never changes. The identifier is a string with the following format:
+
+```
+ceramic://<CID-of-genesis-record>
+```
+
+Sometimes Ceramic identifiers might also be formated as:
 
 ```
 /ceramic/<CID-of-genesis-record>
 ```
 
-For example, a docId might look like this:
+As an example, a docId might look like this:
 
 ```
-/ceramic/bafyreihl3rizxqjkedmp7rdckrqd3kufwe5e7c6xejcoheqo7rp63idsva
+ceramic://bafyreihl3rizxqjkedmp7rdckrqd3kufwe5e7c6xejcoheqo7rp63idsva
 ```
+
+### Document versions
+Each time a document is [anchored on a blockchain](#blockchain-anchoring) with an *anchor record*, a new version of the document is created. Each version of the document can be refered to by using the following format:
+
+```
+ceramic://<CID-of-genesis-record>?version=<CID-of-anchor-record>
+```
+
 
 ## Document log
 
