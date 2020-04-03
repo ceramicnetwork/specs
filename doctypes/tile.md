@@ -10,9 +10,9 @@ Tiles are a flexible way to create single or multi-party statements and can be u
 - [Signed record](#signed-record)
 - [Update rules](#update-rules)
 - [Examples](#examples)
-    - [Collection Policy](#collection-policy)
-    - [Service Policy](#service-policy)
-    - [Privacy Policy](#privacy-policy)
+  - [Collection Policy](#collection-policy)
+  - [Service Policy](#service-policy)
+  - [Privacy Policy](#privacy-policy)
 
 ## Genesis record
 
@@ -22,7 +22,7 @@ The genesis record of a tile document is quite flexible. The `content` property 
 
 Tile genesis records are stored in IPFS using the [`dag-cbor`](https://github.com/ipld/js-ipld-dag-cbor/) IPLD format.
 
-```JSON
+```JSONC
 {
   "doctype": "tile",
   "owners": ["did:3:<CID>"],
@@ -30,13 +30,13 @@ Tile genesis records are stored in IPFS using the [`dag-cbor`](https://github.co
 }
 ```
 
-When creating a new tile its *docId* will be deterministically generated from the content, owners array, and the signature of the user. This means that if a document is being created that already been created the new updates will be automatically loaded. If this is not desired a random `nonce` can be added to the content which will make every *docId* unique.
+When creating a new tile its _docId_ will be deterministically generated from the content, owners array, and the signature of the user. This means that if a document is being created that already been created the new updates will be automatically loaded. If this is not desired a random `nonce` can be added to the content which will make every _docId_ unique.
 
 ## Signed record
 
 Signed records in 3ID are stored in IPFS using the `dag-jose` or `dag-cose` formats. These formats allow for IPLD objects to be stored along with a standardized signature format. They also allow DAG objects to be encrypted. The update to the document is encoded using [json-patch](https://github.com/Starcounter-Jack/JSON-Patch).
 
-```JSON
+```JSONC
 {
   "next": <CID-previous-record>,
   "content": <JSON-patch-object>
@@ -45,7 +45,7 @@ Signed records in 3ID are stored in IPFS using the `dag-jose` or `dag-cose` form
 
 ## Update rules
 
-An update to a tile can change anything in the `content` of the tile document. If there are multiple owners only the first *signed record* needs to contain the json-patch that changes the document. The other owners can simply sign a record that only contains the `next` pointer to the previous signed record.
+An update to a tile can change anything in the `content` of the tile document. If there are multiple owners only the first _signed record_ needs to contain the json-patch that changes the document. The other owners can simply sign a record that only contains the `next` pointer to the previous signed record.
 
 ## Examples
 
@@ -53,11 +53,11 @@ Below there are three examples of possible tiles, Collection Policy, Service Pol
 
 ### Collection Policy
 
-The **Collection Policy tile** represents a *collection* of data, or rather a *collection* of databases that has specific schemas. This tile also contain tags which describe what type of data is being stored within the collection.
+The **Collection Policy tile** represents a _collection_ of data, or rather a _collection_ of databases that has specific schemas. This tile also contain tags which describe what type of data is being stored within the collection.
 
 **Example:**
 
-```JSON
+```JSONC
 {
   "doctype": "tile",
   "owners": ["did:3:bafyappDeveloper..."],
@@ -86,7 +86,7 @@ A **Service Policy tile** is used to describe a simple service, usually in the f
 
 This is an example of how the service tile for the Ceramic anchoring service could look like.
 
-```JSON
+```JSONC
 {
   "doctype": "tile",
   "owners": ["did:3:bafyserviceProvider..."],
@@ -107,13 +107,13 @@ This is an example of how the service tile for the Ceramic anchoring service cou
 
 ### Privacy Policy
 
-A **Privacy Policy tile** allows the user to specify their database instances in a specific *collection* and set special access control rights for these databases. In it the *source* of the data, i.e. the **Service Policy tile** that provides a hosting service, is set which contains the information about where data is backed up. A user can of course set multiple *sources* for a given *collection* for redundant backups, or even change where data is being hosted.
+A **Privacy Policy tile** allows the user to specify their database instances in a specific _collection_ and set special access control rights for these databases. In it the _source_ of the data, i.e. the **Service Policy tile** that provides a hosting service, is set which contains the information about where data is backed up. A user can of course set multiple _sources_ for a given _collection_ for redundant backups, or even change where data is being hosted.
 
 If the user wants to remove some database this can also be done in the **Privacy Policy tile** which contains the history of all databases that have been created and removed.
 
 **Example:**
 
-```JSON
+```JSONC
 {
   "doctype": "tile",
   "owners": ["did:3:bafyuser..."],
