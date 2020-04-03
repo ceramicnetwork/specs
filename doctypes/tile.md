@@ -30,6 +30,8 @@ Tile genesis records are stored in IPFS using the [`dag-cbor`](https://github.co
 }
 ```
 
+When creating a new tile its *docId* will be deterministically generated from the content, owners array, and the signature of the user. This means that if a document is being created that already been created the new updates will be automatically loaded. If this is not desired a random `nonce` can be added to the content which will make every *docId* unique.
+
 ## Signed record
 
 Signed records in 3ID are stored in IPFS using the `dag-jose` or `dag-cose` formats. These formats allow for IPLD objects to be stored along with a standardized signature format. They also allow DAG objects to be encrypted. The update to the document is encoded using [json-patch](https://github.com/Starcounter-Jack/JSON-Patch).
