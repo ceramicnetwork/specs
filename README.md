@@ -10,23 +10,23 @@
 
 - [Protocol overview](#protocol-overview)
 - [Document lifecycle](#document-lifecycle)
-    - [Creating a document](#creating-a-document)
-    - [Updating a document](#updating-a-document)
-    - [Looking up a document](#looking-up-a-document)
+  - [Creating a document](#creating-a-document)
+  - [Updating a document](#updating-a-document)
+  - [Looking up a document](#looking-up-a-document)
 - [Document Identifiers](#document-identifiers)
 - [Document log](#document-log)
-    - [Blockchain anchoring](#blockchain-anchoring)
-    - [Conflict resolution](#conflict-resolution)
-    - [Document records](#document-records)
+  - [Blockchain anchoring](#blockchain-anchoring)
+  - [Conflict resolution](#conflict-resolution)
+  - [Document records](#document-records)
 - [Document types](#document-types)
-    - [Doctypes in Ceramic](#doctypes-in-ceramic)
-    - [Update rules](#update-rules)
+  - [Doctypes in Ceramic](#doctypes-in-ceramic)
+  - [Update rules](#update-rules)
 - [Document update propagation](#document-update-propagation)
-    - [Queries](#queries)
-    - [Future improvements](#future-improvements)
+  - [Queries](#queries)
+  - [Future improvements](#future-improvements)
 - [Ceramic Services](#ceramic-services)
-    - [Anchor Service](#anchor-service)
-    - [Other Services](#other-services)
+  - [Anchor Service](#anchor-service)
+  - [Other Services](#other-services)
 - [Implementations](#implementations)
 
 
@@ -56,13 +56,13 @@ To look up a document the *docId* is needed. Once a *docId* is known a node can 
 
 ## Document Identifiers
 
-In Ceramic, each document has a unique identifier (docId). This is a persistant identifier of the document that never changes. The identifier is a string with the following format:
+In Ceramic, each document has a unique identifier (docId). This is a persistent identifier of the document that never changes. The identifier is a string with the following format:
 
 ```
 ceramic://<CID-of-genesis-record>
 ```
 
-Sometimes Ceramic identifiers might also be formated as:
+Sometimes Ceramic identifiers might also be formatted as:
 
 ```
 /ceramic/<CID-of-genesis-record>
@@ -75,7 +75,8 @@ ceramic://bafyreihl3rizxqjkedmp7rdckrqd3kufwe5e7c6xejcoheqo7rp63idsva
 ```
 
 ### Document versions
-Each time a document is [anchored on a blockchain](#blockchain-anchoring) with an *anchor record*, a new version of the document is created. Each version of the document can be refered to by using the following format:
+
+Each time a document is [anchored on a blockchain](#blockchain-anchoring) with an *anchor record*, a new version of the document is created. Each version of the document can be referred to by using the following format:
 
 ```
 ceramic://<CID-of-genesis-record>?version=<CID-of-anchor-record>
@@ -98,7 +99,7 @@ It is important to note that an update might have an earlier anchor record but n
 
 #### Data withholding attacks
 
-One suggested attack on this conflict resolution system is a data witholding attack. In this scenario a user creates a document, makes two conflicting updates and anchors one of them earlier than the other, but only publishes the data of the update that was anchored later. Now subsequent updates to the document will be made on top of the second, published update. Every observer will accept these updates as valid since they have not seen the first update. However if the user later publishes the data of the earlier update all of the other updates made to the document will be invalidated.
+One suggested attack on this conflict resolution system is a data withholding attack. In this scenario a user creates a document, makes two conflicting updates and anchors one of them earlier than the other, but only publishes the data of the update that was anchored later. Now subsequent updates to the document will be made on top of the second, published update. Every observer will accept these updates as valid since they have not seen the first update. However if the user later publishes the data of the earlier update all of the other updates made to the document will be invalidated.
 
 This is essentially a *double spend attack* which is the problem that blockchains solve. However since identities have only one owner, the user, this is less of a problem. In this case, a "double spend" would cause the user to lose all history and associations that have accrued on their identity, which they are naturally disincentivized to do. Similarly for tile documents signed by multiple parties, since all parties need to sign all updates they all would need to all be aware of the data withholding attack.
 
@@ -147,7 +148,7 @@ An anchor record is simply a proof that the CID of the `next` property was ancho
 }
 ```
 
-The format of the proof metadata object can be seen below. `chainId` is a unique identifier defined by [CAIP-2](https://github.com/ChainAgnostic/CAIPs/blob/master/CAIPs/caip-2.md). It describes the specific blockchain on which the root CID is anchored.  The `blockNumber` and `blockTimestamp` are added to this object for conveniance, but these numbers need to be verified. The `txHash` contains the CID of the blockchain transaction in which the root CID was included. Using this tx hash an external blockchain api can be used to validate the information of the proof. Finally the `root` property contains the CID of the root of the IPLD merkle tree.
+The format of the proof metadata object can be seen below. `chainId` is a unique identifier defined by [CAIP-2](https://github.com/ChainAgnostic/CAIPs/blob/master/CAIPs/caip-2.md). It describes the specific blockchain on which the root CID is anchored.  The `blockNumber` and `blockTimestamp` are added to this object for convenience, but these numbers need to be verified. The `txHash` contains the CID of the blockchain transaction in which the root CID was included. Using this tx hash an external blockchain api can be used to validate the information of the proof. Finally the `root` property contains the CID of the root of the IPLD merkle tree.
 
 ```js
 {
@@ -203,7 +204,7 @@ Given a docId (e.g. `/ceramic/3id/<CID>`) the full log can be retrieved by commu
 
 ### Queries
 
-A node can also query other nodes for the latest head of a particular document. To do this they send a request message to the pubsub topic. Other peers that see this message will respond with a document udpate message.
+A node can also query other nodes for the latest head of a particular document. To do this they send a request message to the pubsub topic. Other peers that see this message will respond with a document update message.
 
 **Request message format:**
 
@@ -218,17 +219,17 @@ If a node that has been offline comes back online it will have to make a request
 
 ### Future improvements
 
-The main reason for having one pubsub topic that all documents are shared within is to more easily create a well connected network. The benefit of this is that you can get updates from nodes interested in the same document, even if not directly connected to them. The main drawback of this approach is scalability. Once the network grows the amount of documents and messages in the pubsub topic will be to large for many nodes. In order to deal with this the documents can be split into multiple different rooms using some form of namespaceing based on *docId*. Exactly how this looks like is not yet determined.
+The main reason for having one pubsub topic that all documents are shared within is to more easily create a well connected network. The benefit of this is that you can get updates from nodes interested in the same document, even if not directly connected to them. The main drawback of this approach is scalability. Once the network grows the amount of documents and messages in the pubsub topic will be to large for many nodes. In order to deal with this the documents can be split into multiple different rooms using some form of namespace-ing based on *docId*. Exactly how this looks like is not yet determined.
 
-A potential problem with the pubsub approach is some form of DoS. When a node makes a request for a specific document a malicious actor could send a lot of heads that do not correspond to the requested document. This would result in the requesting node having to do a lot of computation to make sure all of the received heads are infact not correct. There are a few different way to solve this. One is to use a tit-for-tat system where nodes disconnect from nodes that send many incorrect responses. If many users do this it should effectively block malicious nodes as they start performing an attack. A different approach is to include a zero-knowledge proof in the response that prooves that the CID in the message indeed does correspond to the correct document.
+A potential problem with the pubsub approach is some form of DoS. When a node makes a request for a specific document a malicious actor could send a lot of heads that do not correspond to the requested document. This would result in the requesting node having to do a lot of computation to make sure all of the received heads are in fact not correct. There are a few different way to solve this. One is to use a tit-for-tat system where nodes disconnect from nodes that send many incorrect responses. If many users do this it should effectively block malicious nodes as they start performing an attack. A different approach is to include a zero-knowledge proof in the response that proves that the CID in the message indeed does correspond to the correct document.
 
 ## Ceramic services
 
-The `tile` doctype can be used to descibe services that are made available though through the Ceramic network. A service provider creates a tile document that includes the description of the api that can be used to reach the service (e.g. http api, libp2p protocol, etc). The tile document may also include payment information, i.e. if some form of payment is needed in order to use the service. Ceramic enables many types of services, but the main focus of this document is the *anchor service* which is required for a ceramic node to be able to make updates a document. Please see the Ceramic [Use Cases](https://github.com/ceramicnetwork/ceramic/blob/master/OVERVIEW.md#open-web-services) for descriptions of other services.
+The `tile` doctype can be used to describe services that are made available though through the Ceramic network. A service provider creates a tile document that includes the description of the api that can be used to reach the service (e.g. http api, libp2p protocol, etc). The tile document may also include payment information, i.e. if some form of payment is needed in order to use the service. Ceramic enables many types of services, but the main focus of this document is the *anchor service* which is required for a ceramic node to be able to make updates a document. Please see the Ceramic [Use Cases](https://github.com/ceramicnetwork/ceramic/blob/master/OVERVIEW.md#open-web-services) for descriptions of other services.
 
 ### Anchor service
 
-As mentioned in the [Blockchain anchoring](#blockchain-anchoring) section there is a need for a blockchain anchoring service that alleviates the need for users to make a blockchain transaction for each of their document updates. Instead a ceramic node can rely on an anchoring service that receives anchor requests and on a regular interval batches these requests into a single transaction. This service can be run by anyone, and it's possible to configure which anchoring service to use in the ceramic node by specifying a [Service Policy tile](./doctypes/tile.md#service-policy) in the configuration file. Different services might offer anchors to different blockchains and depending on the context one blockchain might be prefered to another.
+As mentioned in the [Blockchain anchoring](#blockchain-anchoring) section there is a need for a blockchain anchoring service that alleviates the need for users to make a blockchain transaction for each of their document updates. Instead a ceramic node can rely on an anchoring service that receives anchor requests and on a regular interval batches these requests into a single transaction. This service can be run by anyone, and it's possible to configure which anchoring service to use in the ceramic node by specifying a [Service Policy tile](./doctypes/tile.md#service-policy) in the configuration file. Different services might offer anchors to different blockchains and depending on the context one blockchain might be preferred to another.
 
 ### Other services
 
