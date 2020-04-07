@@ -41,7 +41,7 @@ Signed records in 3ID are stored in IPFS using the `dag-jose` or `dag-cose` form
 
 ```JSONC
 {
-  "next": <CID-previous-record>,
+  "prev": <CID-previous-record>,
   "content": <JSON-patch-object>
 }
 ```

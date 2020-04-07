@@ -32,13 +32,13 @@ Account-link genesis records are stored in IPFS using the [`dag-cbor`](https://g
 
 ## Signed record
 
-The signed record of an account link might vary depending on what type of account it is. What these signed records have in common is some form of proof that the account has approved the given update contained in the record. The proof must include the DID that the account is being linked to as well as the CID contained in the `next` property. It should be very similar to the proof the [3id-blockchain-utils](https://github.com/3box/js-3id-blockchain-utils) library provides.
+The signed record of an account link might vary depending on what type of account it is. What these signed records have in common is some form of proof that the account has approved the given update contained in the record. The proof must include the DID that the account is being linked to as well as the CID contained in the `prev` property. It should be very similar to the proof the [3id-blockchain-utils](https://github.com/3box/js-3id-blockchain-utils) library provides.
 
 Account-link signed records are stored in IPFS using the [`dag-cbor`](https://github.com/ipld/js-ipld-dag-cbor/) IPLD format.
 
 ```JSONC
 {
-  "next": <CID-previous-record>,
+  "prev": <CID-previous-record>,
   "content": <link-proof>
 }
 ```
