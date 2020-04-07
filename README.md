@@ -103,7 +103,7 @@ One suggested attack on this conflict resolution system is a data withholding at
 
 This is essentially a *double spend attack* which is the problem that blockchains solve. However since identities have only one owner, the user, this is less of a problem. In this case, a "double spend" would cause the user to lose all history and associations that have accrued on their identity, which they are naturally disincentivized to do. Similarly for tile documents signed by multiple parties, since all parties need to sign all updates they all would need to all be aware of the data withholding attack.
 
-In the case of organizational identities this is more of a problem, e.g., if an old admin of the org wants to cause trouble. This can be solved by introducing "heavy anchors" which rely more heavily on some on-chain mechanism. For example, a smart contract or a DAO that controls the identity.
+In the case of organizational identities this is more of a problem, e.g. if an old admin of the org wants to cause trouble. This can be solved by introducing "heavy anchors" which rely more heavily on some on-chain mechanism. For example, a smart contract or a DAO that controls the identity.
 
 #### Two anchors same blockheight
 
