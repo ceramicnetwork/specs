@@ -38,14 +38,14 @@ Signed records in 3ID are stored in IPFS using the `dag-jose` or `dag-cose` form
 
 ```JSONC
 {
-  "next": <CID-previous-record>,
+  "prev": <CID-previous-record>,
   "content": <JSON-patch-object>
 }
 ```
 
 ## Update rules
 
-An update to a tile can change anything in the `content` of the tile document. If there are multiple owners only the first _signed record_ needs to contain the json-patch that changes the document. The other owners can simply sign a record that only contains the `next` pointer to the previous signed record.
+An update to a tile can change anything in the `content` of the tile document. If there are multiple owners only the first _signed record_ needs to contain the json-patch that changes the document. The other owners can simply sign a record that only contains the `prev` pointer to the previous signed record.
 
 ## Examples
 

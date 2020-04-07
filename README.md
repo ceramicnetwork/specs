@@ -85,7 +85,7 @@ ceramic://<CID-of-genesis-record>?version=<CID-of-anchor-record>
 
 ## Document log
 
-A Ceramic document is made up of an append-only log that can be reduced to a single json object. Each record in the log is an [IPLD](https://ipld.io) object that can be referenced by its [CID](https://github.com/multiformats/cid). Since CIDs are unique identifiers based on the contents of the object we can create a linked list where each record contains a `next` pointer to the previous entry in the log. This makes the log an immutable history of records. There might however be different branches of a log. To deal with this, a [conflict resolution](#conflict-resolution) strategy that uses blockchain anchoring is used. Each record in the log is of a certain type: genesis, signed, and anchor. The genesis record is the first record of a document. Anchor records anchor a document to a blockchain. Signed records contain updates to the document. The structure of these records is described in the [Document records](#document-records) section below.
+A Ceramic document is made up of an append-only log that can be reduced to a single json object. Each record in the log is an [IPLD](https://ipld.io) object that can be referenced by its [CID](https://github.com/multiformats/cid). Since CIDs are unique identifiers based on the contents of the object we can create a linked list where each record contains a `prev` pointer to the previous entry in the log. This makes the log an immutable history of records. There might however be different branches of a log. To deal with this, a [conflict resolution](#conflict-resolution) strategy that uses blockchain anchoring is used. Each record in the log is of a certain type: genesis, signed, and anchor. The genesis record is the first record of a document. Anchor records anchor a document to a blockchain. Signed records contain updates to the document. The structure of these records is described in the [Document records](#document-records) section below.
 
 ### Blockchain anchoring
 
@@ -127,22 +127,22 @@ The genesis record is the first record of the document. It has three properties,
 
 #### Signed records
 
-Signed records contain a pointer to the previous record as `next`, a patch containing the update to the document as `content`, and an encoded signature. The main signature encoding scheme used in Ceramic is [IPLD Object Signing and Encryption](./ipld-jose-cose.md), however the signature may be encoded in different ways depending on the doctype being used (See [account-link](./doctypes/account-link.md) doctype for an example of a document using a different encoding). The way in which signatures are verified also depend on which doctype is being used.
+Signed records contain a pointer to the previous record as `prev`, a patch containing the update to the document as `content`, and an encoded signature. The main signature encoding scheme used in Ceramic is [IPLD Object Signing and Encryption](./ipld-jose-cose.md), however the signature may be encoded in different ways depending on the doctype being used (See [account-link](./doctypes/account-link.md) doctype for an example of a document using a different encoding). The way in which signatures are verified also depend on which doctype is being used.
 
 ```js
 {
-  "next": <CID-of-previous-record>,
+  "prev": <CID-of-previous-record>,
   "content": <content-update>
 }
 ```
 
 #### Anchor records
 
-An anchor record is simply a proof that the CID of the `next` property was anchored on a blockchain. The format of this record can be seen below. The `proof` property contains the CID of the proof metadata. This proof metadata object is shared by all document updates that were anchored in the same merkle tree on the same blockchain. The `path` is the unique path to the leaf of the merkle tree that contains the CID that is also in the `next` property.
+An anchor record is simply a proof that the CID of the `prev` property was anchored on a blockchain. The format of this record can be seen below. The `proof` property contains the CID of the proof metadata. This proof metadata object is shared by all document updates that were anchored in the same merkle tree on the same blockchain. The `path` is the unique path to the leaf of the merkle tree that contains the CID that is also in the `prev` property.
 
 ```js
 {
-  next: <CID-of-previous-record>,
+  prev: <CID-of-previous-record>,
   proof: <CID-of-proof>,
   path: <string-path-in-merkle-tree>
 }
@@ -166,7 +166,7 @@ To verify a specific anchor record the following algorithm:
 
 1. Get the proof metadata object from ipfs using the proof CID
 2. Get all the data starting from `root` and follow all links in the `path`
-3. Verify that the end of the path is the same as `next`
+3. Verify that the end of the path is the same as `prev`
 4. Get the transaction data from the given blockchain using `txHash`
 5. Verify that `blockNumber` and `blockTimestamp` are correct
 
