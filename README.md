@@ -147,11 +147,11 @@ An anchor record is simply a proof that the CID of the `next` property was ancho
 }
 ```
 
-The format of the proof metadata object can be seen below. `Chain` is a unique identifier for the specific blockchain on which the root CID is anchored. The `blockNumber` and `blockTimestamp` are added to this object for conveniance, but these numbers need to be verified. The `txHash` contains the CID of the blockchain transaction in which the root CID was included. Using this tx hash an external blockchain api can be used to validate the information of the proof. Finally the `root` property contains the CID of the root of the IPLD merkle tree.
+The format of the proof metadata object can be seen below. `chainId` is a unique identifier defined by [CAIP-2](https://github.com/ChainAgnostic/CAIPs/blob/master/CAIPs/caip-2.md). It describes the specific blockchain on which the root CID is anchored.  The `blockNumber` and `blockTimestamp` are added to this object for conveniance, but these numbers need to be verified. The `txHash` contains the CID of the blockchain transaction in which the root CID was included. Using this tx hash an external blockchain api can be used to validate the information of the proof. Finally the `root` property contains the CID of the root of the IPLD merkle tree.
 
 ```js
 {
-  chain: <unique-chain-identifier>,
+  chainId: <CAIP-2-blockchain-identifier>,
   blockNumber: <int-blocknumber>,
   blockTimestamp: <int-unix-timestamp>,
   txHash: <CID-tx-hash>,
