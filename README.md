@@ -140,6 +140,8 @@ Signed records contain a pointer to the previous record as `prev`, a patch conta
 
 An anchor record is simply a proof that the CID of the `prev` property was anchored on a blockchain. The format of this record can be seen below. The `proof` property contains the CID of the proof metadata. This proof metadata object is shared by all document updates that were anchored in the same merkle tree on the same blockchain. The `path` is the unique path to the leaf of the merkle tree that contains the CID that is also in the `prev` property.
 
+##### Anchor record:
+
 ```js
 {
   prev: <CID-of-previous-record>,
@@ -149,6 +151,8 @@ An anchor record is simply a proof that the CID of the `prev` property was ancho
 ```
 
 The format of the proof metadata object can be seen below. `chainId` is a unique identifier defined by [CAIP-2](https://github.com/ChainAgnostic/CAIPs/blob/master/CAIPs/caip-2.md). It describes the specific blockchain on which the root CID is anchored.  The `blockNumber` and `blockTimestamp` are added to this object for convenience, but these numbers need to be verified. The `txHash` contains the CID of the blockchain transaction in which the root CID was included. Using this tx hash an external blockchain api can be used to validate the information of the proof. Finally the `root` property contains the CID of the root of the IPLD merkle tree.
+
+##### Proof Metadata:
 
 ```js
 {
