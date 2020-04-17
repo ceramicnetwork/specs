@@ -49,34 +49,7 @@ An update to a tile can change anything in the `content` of the tile document. I
 
 ## Examples
 
-Below there are three examples of possible tiles, Collection Policy, Service Policy, and Privacy Policy. These tiles in particular are useful when specifying a user cenrtic data storage system.
-
-### Collection Policy
-
-The **Collection Policy tile** represents a _collection_ of data, or rather a _collection_ of databases that has specific schemas. This tile also contain tags which describe what type of data is being stored within the collection.
-
-**Example:**
-
-```JSONC
-{
-  "doctype": "tile",
-  "owners": ["did:3:bafyappDeveloper..."],
-  "content": {
-    "databases": [{
-      "type": "orbitdb",
-      "store": "kvstore",
-      "access": "legacy-ipfs-3box",
-      "schema": ...
-    }, {
-      "type": "orbitdb",
-      "store": "feedstore",
-      "access": "thread-access"
-      "schema": ...
-    }],
-    "tags": ["profile"]
-  }
-}
-```
+Below there is an example of a Service Policy. For more examples see the [User Account Model](../data-models/account.md).
 
 ### Service Policy
 
@@ -105,33 +78,3 @@ This is an example of how the service tile for the Ceramic anchoring service cou
 }
 ```
 
-### Privacy Policy
-
-A **Privacy Policy tile** allows the user to specify their database instances in a specific _collection_ and set special access control rights for these databases. In it the _source_ of the data, i.e. the **Service Policy tile** that provides a hosting service, is set which contains the information about where data is backed up. A user can of course set multiple _sources_ for a given _collection_ for redundant backups, or even change where data is being hosted.
-
-If the user wants to remove some database this can also be done in the **Privacy Policy tile** which contains the history of all databases that have been created and removed.
-
-**Example:**
-
-```JSONC
-{
-  "doctype": "tile",
-  "owners": ["did:3:bafyuser..."],
-  "content": {
-    "collection": "/ceramic/bafy0...", // Ceramic id of Collection tile
-    "sources": ["/ceramic/bafy1..."], // Ceramic id of Service tile
-    "databases": [{
-      "orbitdb": "/orbitdb/kvstore/Qmfeiojsdf...",
-      "accessList": [{
-       "did": "did:3:user2...",
-       "permissions": "read"
-     }]
-    }, {
-      "orbitdb": "/orbitdb/feedstore/Qmfeiojfew..."
-    }, {
-      "orbitdb": "/orbitdb/feedstore/Qmh3249ghd...",
-      "deleted": true
-    }]
-  }
-}
-```

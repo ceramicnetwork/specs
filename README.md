@@ -27,6 +27,8 @@
 - [Ceramic Services](#ceramic-services)
   - [Anchor Service](#anchor-service)
   - [Other Services](#other-services)
+- [Common Data Models](#common-data-models)
+  - [User Account](./data-models/account.md)
 - [Implementations](#implementations)
 
 
@@ -238,6 +240,12 @@ As mentioned in the [Blockchain anchoring](#blockchain-anchoring) section there 
 ### Other services
 
 Using Ceramic [Service Policy tiles](./doctypes/tile.md#service-policy) almost any type of services can be represented. Some examples of this include Payments, Data hosting, Indexing, etc. Adding a service to ceramic allows it to be used in a user centric way. Services can be enabled per user and apps can route to different services though the users identity.
+
+## Common Data Models
+
+Ceramic provides a lot of freedom in how data models can be defined. Sometimes more strict models are needed in order to achieve certain use cases. 
+
+* [User Account](./data-models/account.md) - the default user account model of Ceramic
 
 ## Implementations
 
