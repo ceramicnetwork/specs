@@ -190,7 +190,7 @@ The sources tile contains a list of data sources that the user has. Each entry i
 
 ### Privacy Policy Tile
 
-The Privacy Policy tile contains encrypted information about the users data. All of the data is encrypted using the specific **Privacy Policy Read Key** of this policy. The **collection-policy** property contains a docId of the **Collection Policy** this **Privacy Policy** applies to. The **service-policy** property contains an array of docIds of the services that back up the data defined in this privacy policy. Most importantly the **references** property holds an array of entries which when decrypted contains information about the database used to store the users information.
+The Privacy Policy tile contains encrypted information about the users data. All of the data is encrypted using the specific **Privacy Policy Read Key** of this policy. The **collection-policy** property contains a docId of the **Collection Policy** this **Privacy Policy** applies to. The **service-policies** property contains an array of docIds of the services that back up the data defined in this privacy policy. All applicaitons which have been granted rights to this Collection are listed in the **applications** arrayMost importantly the **references** property holds an array of entries which when decrypted contains information about the database used to store the users information.
 
 ##### Schema
 
@@ -206,8 +206,17 @@ The Privacy Policy tile contains encrypted information about the users data. All
                 "collection-policy": {
                     "type": "string"
                 },
-                "service-policy": {
-                    "type": "string"
+                "service-policis": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "applications": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
                 },
                 "references": {
                     "type": "array",
@@ -218,8 +227,7 @@ The Privacy Policy tile contains encrypted information about the users data. All
             },
             "required": [
                 "collection-policy",
-                "refs",
-                "service-policy"
+                "references",
             ],
             "title": "PrivacyPolicy"
         }
@@ -232,7 +240,8 @@ The Privacy Policy tile contains encrypted information about the users data. All
 ```jsonc
 {
     "collection-policy": "<JWE>",
-    "service-policy": "<JWE>",
+    "service-policies": ["<JWE>"],
+    "applications": ["<JWE>"],
     "references": ["<JWE>", "<JWE>"]
 }
 ```
