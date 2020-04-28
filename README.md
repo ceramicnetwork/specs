@@ -208,7 +208,7 @@ Given a docId (e.g. `/ceramic/3id/<CID>`) the full log can be retrieved by commu
 
 ### Queries
 
-A node can also query other nodes for the latest head of a particular document. To do this they send a request message to the pubsub topic. Other peers that see this message will respond with a document update message.
+A node can also query other nodes for the latest head of a particular document. To do this they send a `REQUEST` message to the pubsub topic. Other peers that see this message will respond with a document `RESPONSE` message.
 
 **Request message format:**
 
@@ -220,6 +220,21 @@ A node can also query other nodes for the latest head of a particular document. 
 ```
 
 If a node that has been offline comes back online it will have to make a request for all the documents it's interested in to make sure it has all the latest updates.
+
+### Anchor metadata messages
+
+When a node request an anchor from an anchor service it will recieve metadata about when the service intends to anchor the document update on a blockchain. However, other nodes interested in the same document will be unaware of this extra metadata information. In order to share this info with other node the `ANCHOR_META` message is used to tell other nodes that a request has been made to a specific anchor service. The interested peers can then query the given anchor service to retrieve the metadata information.
+
+### Message types
+
+| name        | typ  | params                                                       |
+| ----------- | ---- | ------------------------------------------------------------ |
+| UPDATE      | 0    | id: `docId`, cid: `head-CID`                                 |
+| REQUEST     | 1    | id: `docId`                                                  |
+| RESPONSE    | 2    | id: `docId`, cid: `head-CID`                                 |
+| ANCHOR_META | 3    | id: `docId`, cid: `head-CID`,<br />anchor-service-url: `url-of-service` |
+
+
 
 ### Future improvements
 
@@ -247,3 +262,4 @@ Currently there is a partial Typescript ([js-ceramic](https://github.com/ceramic
 ## Continue
 
 ### [Ceramic JavaScript Client  >](https://github.com/ceramicnetwork/js-ceramic)
+
