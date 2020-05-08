@@ -24,11 +24,11 @@
 - [Document update propagation](#document-update-propagation)
   - [Queries](#queries)
   - [Future improvements](#future-improvements)
+- [Templates](#templates)
+  - [Account](./templates/account.md)
 - [Ceramic Services](#ceramic-services)
   - [Anchor Service](#anchor-service)
   - [Other Services](#other-services)
-- [Common Data Models](#common-data-models)
-  - [User Account](./data-models/account.md)
 - [Implementations](#implementations)
 
 
@@ -229,6 +229,12 @@ The main reason for having one pubsub topic that all documents are shared within
 
 A potential problem with the pubsub approach is some form of DoS. When a node makes a request for a specific document a malicious actor could send a lot of heads that do not correspond to the requested document. This would result in the requesting node having to do a lot of computation to make sure all of the received heads are in fact not correct. There are a few different way to solve this. One is to use a tit-for-tat system where nodes disconnect from nodes that send many incorrect responses. If many users do this it should effectively block malicious nodes as they start performing an attack. A different approach is to include a zero-knowledge proof in the response that proves that the CID in the message indeed does correspond to the correct document.
 
+## Templates
+
+Ceramic provides a lot of freedom in how data models can be defined. Things can get quite complicated when documents link other documents. Sometimes more strict models are needed in order to achieve certain use cases. To aid in the process of creating strict data models Ceramic provides Templates. A template defines a structure of one or more documents that are linked together. Below you can find some predefined templates.
+
+* [Account](./templates/account.md) - the default user account model of Ceramic
+
 ## Ceramic services
 
 The `tile` doctype can be used to describe services that are made available though through the Ceramic network. A service provider creates a tile document that includes the description of the api that can be used to reach the service (e.g. http api, libp2p protocol, etc). The tile document may also include payment information, i.e. if some form of payment is needed in order to use the service. Ceramic enables many types of services, but the main focus of this document is the *anchor service* which is required for a ceramic node to be able to make updates a document. Please see the Ceramic [Use Cases](https://github.com/ceramicnetwork/ceramic/blob/master/OVERVIEW.md#open-web-services) for descriptions of other services.
@@ -240,12 +246,6 @@ As mentioned in the [Blockchain anchoring](#blockchain-anchoring) section there 
 ### Other services
 
 Using Ceramic [Service Policy tiles](./doctypes/tile.md#service-policy) almost any type of services can be represented. Some examples of this include Payments, Data hosting, Indexing, etc. Adding a service to ceramic allows it to be used in a user centric way. Services can be enabled per user and apps can route to different services though the users identity.
-
-## Common Data Models
-
-Ceramic provides a lot of freedom in how data models can be defined. Sometimes more strict models are needed in order to achieve certain use cases. 
-
-* [User Account](./data-models/account.md) - the default user account model of Ceramic
 
 ## Implementations
 

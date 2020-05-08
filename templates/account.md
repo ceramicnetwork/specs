@@ -1,6 +1,6 @@
-# User Account Model
+# Account Template
 
-> The default user account model in Ceramic provides a structured and flexible way to represent a user and their information. This model is constructued using a set of tile documents that represent different aspects of the users account, such as data sources, public profile, associated services, etc. Together they enable a user centric data and service routing system.
+> The account temple provides a structured and flexible way to represent a user and their information in Ceramic. This template is constructs a set of tile documents that represent different aspects of a users account, such as data sources, public profile, associated services, etc. Together they enable a user centric data and service routing system.
 
 
 
@@ -8,13 +8,13 @@
 
 ## Overview
 
-The Ceramic account model is a data structure that represents a user. It uses different tiles to keep track of various categories of data associated with the user. The five main categories are: **Account Links** Which keeps track of all the [account-links](./doctypes/account-link.md) that map to the users DID. The **Keychain** which keeps track of data that allows users to authenticate to their DID. Each account can have a **Profile** which contains public information about the account. **Services** describes the prefered services that the user can configure for the account, for example how to send them a message. Finally **Sources** describe different databases that is associated to the users account. These five categories are all described as Ceramic tiles and the **Account tile** contains pointers to these specific tiles. The users DID contains a link to this account tile. All of these tiles have a defined schema, most of which are defined below. 
+The Ceramic account template is a data structure that represents a user. It uses different tiles to keep track of various categories of data associated with the user. The five main categories are: **Account Links** Which keeps track of all the [account-links](./doctypes/account-link.md) that map to the users DID. The **Keychain** which keeps track of data that allows users to authenticate to their DID. Each account can have a **Profile** which contains public information about the account. **Services** describes the prefered services that the user can configure for the account, for example how to send them a message. Finally **Sources** describe different databases that is associated to the users account. These five categories are all described as Ceramic tiles and the **Account tile** contains pointers to these specific tiles. The users DID contains a link to this account tile. All of these tiles have a defined schema, most of which are defined below. 
 
 In the above graphic we can see that all tiles are owned and created by the user *Alice*, with the exception of the **Collection Policy**. Instead the **Collection Policy** is a tile that is created by an application developer to describe the data of their application. This means that there is only one **Collection policy** for all the user of an app. From the account perspective the **Sources** tile contains an array of encrypted tuples of **Collection policies** and **Privacy policies**. The Privacy policy contains the id/address of particular database instances that are controlled by the given user, while the **Collection Policy** contains information about the schema and configuration of these databases. This abstraction allows users data to remain encrypted and private while app developers can browse available data from existing applications by looking at **Collection policies** that are availible in the Ceramic network. As an example in the graphic above there is a **ThreadsDB Schema tile** which describes the schema used by a [*Textile ThreadsDB*](https://github.com/textileio/js-threads) instance.
 
 ## Tile definitions
 
-The various user account model tiles can be found below. Each have a short description along with their schema and simple examples. 
+The various user account tiles can be found below. Each have a short description along with their schema and simple examples. 
 
 ### Account Tile
 
@@ -95,6 +95,58 @@ The account links tile is simply an array of docIds for [account-links](./doctyp
 ```json
 ["ceramic://bafyljsdf1", "ceramic://bafyljsdf2"]
 ```
+
+
+
+### Claims Tile
+
+The claims tile contains a list of claims issued by third party services about the user. For example this could include social verifications for twitter, discord, and discourse. 
+
+##### Schema
+
+```json
+{
+    "$schema": "http://json-schema.org/draft-06/schema#",
+    "type": "array",
+    "items": {
+        "type": "string"
+    },
+    "definitions": {}
+}
+```
+
+##### Example
+
+```jsonc
+[<JWT>, <JWT>]
+```
+
+
+
+### Connections Tile
+
+The connection tile contains a list of DIDs that the user is following.
+
+##### Schema
+
+```json
+{
+    "$schema": "http://json-schema.org/draft-06/schema#",
+    "type": "array",
+    "items": {
+        "type": "string"
+    },
+    "definitions": {}
+}
+```
+
+##### Example
+
+```jsonc
+["did:3:bafy1...", "did:3:bafy2..."]
+```
+
+
 
 
 
