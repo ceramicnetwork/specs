@@ -1,6 +1,6 @@
 # Account Template
 
-> The account temple provides a structured and flexible way to represent a user and their information in Ceramic. This template is constructs a set of tile documents that represent different aspects of a users account, such as data sources, public profile, associated services, etc. Together they enable a user centric data and service routing system.
+> The account template provides a structured and flexible way to represent a user and their information in Ceramic. This template is constructs a set of tile documents that represent different aspects of a users account, such as data sources, public profile, associated services, etc. Together they enable a user centric data and service routing system.
 
 
 
