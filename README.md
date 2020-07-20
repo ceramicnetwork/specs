@@ -111,58 +111,113 @@ It is technically possible, though unlikely, that two document updates get ancho
 
 ### Document records
 
-Records act as the fundamental building block for Ceramic documents. A record is an IPLD object that contains some data and a proof for that data. Each record type provides a method for verifying its proofs. A proof can have many forms but the most common examples are signatures and blockchain anchors.
+Records act as the fundamental building block for Ceramic documents. A record is an IPLD object that contains some data and a proof for that data. Each record type provides a method for verifying its proofs. A proof can have many forms but the most common examples are signatures and blockchain anchors. Below the most common record types are defined with the expected data format described using [IPLD Schema](https://specs.ipld.io/schemas/).
 
 #### Genesis record
 
-The genesis record is the first record of the document. It has three properties, `doctype`, `owners`, and `content`. The *doctype* is a string which describes the doctype of this document. *owners* is a property that has an array of strings which represent the document owner(s). Finally the *genesis* property contains the content of the document at the time of creation. The genesis record doesn't specify a proof.
+The genesis record is the first record of the document. The CID of this record is used to create the persistent `DocId` of the document, which is an immutable permalink used to identify the particular document. The schema outlined below describes the geneal form of genesis records for any doctype. It has three main properties, `doctype`, `header`, and `data`. The *doctype* is a string which describes the doctype of this document. *header* is a property that includes additional metadata about the document. Finally the *data* property contains the content of the document at the time of creation.
 
-```js
-{
-  "doctype": <doctype-string>,
-  "owners": [<owner-id-string>],
-  "content": <content>
+```ipldsch
+type GenesisHeader struct {
+  owners [String]
+  schema optional String
+  tags optional [String]
+  unique optional String
+}
+
+type GenesisRecord struct {
+  doctype String
+  header GenesisHeader
+  data Any
 }
 ```
+
+The required properties that need to be defined by all doctypes.  However it's up to the specific doctype how to use the data within.
+
+- `doctype` - a string that contains the name of the given doctype
+- `owners` - an array of strings that defines the owners of the document
+- `data` - the data that is used to generate the content of this document
+
+There are a few optional properties above that have special uses in the Ceramic protocol.
+
+- `schema` - a string that should represent a Ceramic DocId of a document which contains a schema. It's up to the specific doctype to use the schema to validate the document content
+- `tags` - an array of strings that can be used to  categorize the given document. Anchor and Indexing services in the  Ceramic network will use this property if present
+- `unique` - if present should contain a random string that allows the document to get a unique DocId even if it has the exact same content as another document
 
 #### Signed records
 
-Signed records contain a pointer to the previous record as `prev`, a patch containing the update to the document as `content`, and an encoded signature. The main signature encoding scheme used in Ceramic is [IPLD Object Signing and Encryption](./ipld-jose-cose.md), however the signature may be encoded in different ways depending on the doctype being used (See [account-link](./doctypes/account-link.md) doctype for an example of a document using a different encoding). The way in which signatures are verified also depend on which doctype is being used.
+A **signed record** allows a document to be updated. It either contains a signed proof (e.g. `address-link`) or is wrapped in one (e.g. doctypes using [dag-jose](https://github.com/oed/js-dag-jose)). Signed records contain a pointer to the previous record as `prev`, an update to the document as `data`, and the encoded signature. The way in which signatures are verified depend on which doctype is being used.
 
-```js
-{
-  "prev": <CID-of-previous-record>,
-  "content": <content-update>
+```ipldsch
+type SignedHeader struct {
+  owners optional [String]
+  schema optional String
+  tags optional [String]
+}
+
+type SignedRecord struct {
+  id Link
+  prev Link
+  refs [Link]
+  header optional SignedHeader
+  data Any
 }
 ```
+
+The required properties that need to be defined by all signed records:
+
+- `id` - an IPLD link to the Genesis record
+- `prev` - an IPLD link to the previous record
+- `refs` - an array of IPLD links (see [Reference links](#reference-links)) 
+- `data` - the data that is used to update the content of the document, e.g. a patch object
+
+The three optional properties in the header serve specific purposes:
+
+- `owners` - should be included to update the owners of the document, e.g. key rotation
+- `schema` - should be included to update the schema that is used by the document
+- `tags` - should be included to update the tags for the document
 
 #### Anchor records
 
-An anchor record is simply a proof that the CID of the `prev` property was anchored on a blockchain. The format of this record can be seen below. The `proof` property contains the CID of the proof metadata. This proof metadata object is shared by all document updates that were anchored in the same merkle tree on the same blockchain. The `path` is the unique path to the leaf of the merkle tree that contains the CID that is also in the `prev` property.
+An anchor record is simply a proof that the CID of the `prev` property was anchored on a blockchain. The format of this record can be seen below. The `proof` property contains the CID of the AnchorProof. This proof metadata object is shared by all document updates that were anchored in the same merkle tree on the same blockchain. The `path` is the unique path to the leaf of the merkle tree that contains the CID that is also in the `prev` property.
 
 ##### Anchor record:
 
-```js
-{
-  prev: <CID-of-previous-record>,
-  proof: <CID-of-proof>,
-  path: <string-path-in-merkle-tree>
+```ipldsch
+type MerkleNode struct {
+  L Link
+  R Link
+}
+
+type AnchorProof struct {
+  chainId String
+  blockNumber Int
+  blockTimestamp Int
+  txHash Link
+  root Link
+}
+
+type AnchorRecord struct {
+  id Link
+  prev Link
+  refs [Link]
+  proof &AnchorProof
+  path String
 }
 ```
 
-The format of the proof metadata object can be seen below. `chainId` is a unique identifier defined by [CAIP-2](https://github.com/ChainAgnostic/CAIPs/blob/master/CAIPs/caip-2.md). It describes the specific blockchain on which the root CID is anchored.  The `blockNumber` and `blockTimestamp` are added to this object for convenience, but these numbers need to be verified. The `txHash` contains the CID of the blockchain transaction in which the root CID was included. Using this tx hash an external blockchain api can be used to validate the information of the proof. Finally the `root` property contains the CID of the root of the IPLD merkle tree.
+In addition to `id`, `prev`, and `refs` which where defined above, we have the following properties:
 
-##### Proof Metadata:
+- `chainId` - a [CAIP-2](https://github.com/ChainAgnostic/CAIPs/blob/master/CAIPs/caip-2.md) string representing a specific blockchain
+- `blockNumber` - the number of the block in which the transaction was included
+- `blockTimestamp` - the timestamp in the block in which the transaction was included
+- `txHash` - a CID of a blockchain transaction, e.g. [eth-tx](https://github.com/ipld/js-ipld-ethereum/)
+- `root` - an IPLD link to a MerkleNode
+- `path` - a string representing the path from `root` to the SignedRecord also referenced by `prev`
 
-```js
-{
-  chainId: <CAIP-2-blockchain-identifier>,
-  blockNumber: <int-blocknumber>,
-  blockTimestamp: <int-unix-timestamp>,
-  txHash: <CID-tx-hash>,
-  root: <CID-merkle-tree-root>
-}
-```
+Note that the `blockNumber` and `blockTimestamp` are added to this object for convenience, but these numbers need to be verified. The `txHash` contains the CID of the blockchain transaction in which the root CID was included. Using this tx hash an external blockchain api can be used to validate the information of the proof. Finally the `root` property contains the CID of the root of the IPLD merkle tree.
+
+Below a graphical representation of an Anchor Record as well as it's path in the merkle tree that contains its proof is depicted. Both the *Merkle Root* and *IPLD object* are represented by a *MerkleNode* as defined above.
 
 ![Anchor record](./images/anchor-record.png)
 
@@ -175,6 +230,14 @@ To verify a specific anchor record the following algorithm:
 5. Verify that `blockNumber` and `blockTimestamp` are correct
 
 A nice property of storing the anchor proof and the merkle tree using IPLD is that documents that share the same proof object and have similar paths in the merkle tree will end up collaboratively storing parts of the data of their proofs.
+
+#### Additional record types
+
+In the future there might be new record types defined by additional [CIPs](https://github.com/ceramicnetwork/CIP). These may include things like DAO records which in theory could  act as both an anchor and a signature record. If a new record type is  defined it needs to get explicit support in each Doctype.
+
+#### Reference links
+
+The `refs` property in the signed and anchor records contain a list of records that make up this document. It's used as a way to speed up the syncing process of a document log. In order to achieve this the `refs` property points to a set of previous records based on their logarithmic distance from the current node. See the [ipfs-log source](https://github.com/orbitdb/ipfs-log/blob/master/src/log.js#L268-L280) for reference of how this can be implemented.
 
 ## Document types
 
