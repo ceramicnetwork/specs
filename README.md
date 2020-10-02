@@ -24,15 +24,12 @@
 - [Document update propagation](#document-update-propagation)
   - [Queries](#queries)
   - [Future improvements](#future-improvements)
-- [Ceramic Services](#ceramic-services)
-  - [Anchor Service](#anchor-service)
-  - [Other Services](#other-services)
 - [Implementations](#implementations)
 
 
 ## Protocol overview
 
-Ceramic is a decentralized protocol that enables the creation of tamper resistant updatable documents. This is achieved through a combination of digital signatures, specific update rules, and blockchain anchoring. A Ceramic document can be used to represent a self-sovereign identity, a policy for data access control, a verifiable credential, or any agreement between multiple parties. The protocol doesn’t rely on any particular blockchain system, instead it utilizes [IPLD](https://ipld.io) to encode document changes in a hash linked data structure, called a Merkle DAG ([Directed Acyclic Graph](https://en.wikipedia.org/wiki/Directed_acyclic_graph)). Verifying a particular document only requires a user to sync the specific data of the given document. A node in the Ceramic network can thus choose to only *pin* the documents it cares about. This means that there is no global ledger of documents.
+Ceramic is a decentralized protocol that enables the creation of tamper resistant updatable documents. This is achieved through a combination of digital signatures, blockchain anchoring, and specific update rules. A Ceramic document can be used to represent a self-sovereign identity, a policy for data access control, a verifiable credential, or any agreement between multiple parties. The protocol doesn’t rely on any particular blockchain system, instead it utilizes [IPLD](https://ipld.io) to encode document changes in a hash linked data structure, called a Merkle DAG ([Directed Acyclic Graph](https://en.wikipedia.org/wiki/Directed_acyclic_graph)). Verifying a particular document only requires a user to sync the specific data of the given document. A node in the Ceramic network can thus choose to only *pin* the documents it cares about. This means that there is no global ledger of documents.
 
 A Ceramic document consists of an append-only log where updates are signed then anchored on a blockchain. There are different types of documents (doctypes). Each doctype specifies rules that govern what a valid update to a document looks like, such as signatures and state transitions. This allows Ceramic nodes to verify the state of a given document in a decentralized way. When an update is made to a particular document the nodes in the network gossip about the update and all nodes interested in this update will change the state of the given document. The protocol is agnostic as to which blockchain is used for anchoring and a document could potentially be anchored in multiple chains.
 
@@ -56,22 +53,16 @@ To look up a document the *docId* is needed. Once a *docId* is known a node can 
 
 ## Document Identifiers
 
-In Ceramic, each document has a unique identifier (docId). This is a persistent identifier of the document that never changes. The identifier is a string with the following format:
+In Ceramic, each document has a unique identifier (DocID). This is a persistent identifier of the document that never changes. The identifier encoding is defined in [**CIP-59**](https://github.com/ceramicnetwork/CIP/issues/59). When encoded as a string, a DocID is often prepended with the protocol handler:
 
 ```
-ceramic://<CID-of-genesis-record>
-```
-
-Sometimes Ceramic identifiers might also be formatted as:
-
-```
-/ceramic/<CID-of-genesis-record>
+ceramic://<DocID>
 ```
 
 As an example, a docId might look like this:
 
 ```
-ceramic://bafyreihl3rizxqjkedmp7rdckrqd3kufwe5e7c6xejcoheqo7rp63idsva
+ceramic://kjzl6fddub9hxf2q312a5qjt9ra3oyzb7lthsrtwhne0wu54iuvj852bw9wxfvs
 ```
 
 ### Document versions
@@ -79,7 +70,7 @@ ceramic://bafyreihl3rizxqjkedmp7rdckrqd3kufwe5e7c6xejcoheqo7rp63idsva
 Each time a document is [anchored on a blockchain](#blockchain-anchoring) with an *anchor record*, a new version of the document is created. Each version of the document can be referred to by using the following format:
 
 ```
-ceramic://<CID-of-genesis-record>?version=<CID-of-anchor-record>
+ceramic://<DocID>?version=<CID-of-anchor-record>
 ```
 
 
@@ -90,6 +81,8 @@ A Ceramic document is made up of an append-only log that can be reduced to a sin
 ### Blockchain anchoring
 
 Document updates are anchored to a blockchain using a merkle tree which is encoded using IPLD. The root of this merkle tree is put on a blockchain, and each leaf of the tree contains a hash of a document update. This means that a large set of document updates can be anchored to a blockchain using only one transaction. Since the merkle tree is encoded using IPLD the witness (merkle proof) for a specific document update can be synced efficiently over the IPFS network. In most cases this anchoring service will be run by a third party that aggregates many updates from many users, but a user may of course choose to anchor their own records if they prefer.
+
+In many cases individual users are likely to update a small number of documents. Instead of having to send their own blockchain transactions they can send their document updates to an anchoring service. This service receives anchor requests from multiple different users and batches these requests into a single transaction on a regular interval. This service can be run by anyone, and it's possible to configure which anchoring service to use in a ceramic node. Different services might offer custom anchor intervals, or anchor to different blockchains. Depending on the context one blockchain might be preferred to another.
 
 ### Conflict resolution
 
@@ -247,13 +240,12 @@ Every Ceramic document has to specify a document type (doctype). The doctype des
 
 There are currently three main doctypes specified by Ceramic, but more can be added in the future if needed.
 
-- [3id](./doctypes/3id.md) - Self-sovereign identities using the DID standard
-- [tile](./doctypes/tile.md) - Tile documents used to describe services, schemas, metadata, access control, etc.
-- [account-link](./doctypes/account-link.md) - Links from blockchain addresses to DIDs
+- [Tile](https://github.com/ceramicnetwork/CIP/issues/56) - Tile documents used to describe services, schemas, metadata, access control, etc.
+- [CAIP-10 link](https://github.com/ceramicnetwork/CIP/issues/15) - Links from blockchain addresses to DIDs
 
 ### Update rules
 
-Each doctype needs to specify rules for what constitutes valid updates and valid sequences of log records. For example, the *3id* doctype only allows the user to add or remove document properties if the records are signed by the *management key* of the 3id, while the *tile* doctype is more flexible and might require signatures from multiple parties. The doctype may also specify the required data format for the content of the given document. For example, the *account-link* doctype only allows one DID as its content.
+Each doctype needs to specify rules for what constitutes valid updates and valid sequences of log records. The doctype may also specify the required data format for the content of the given document. For example, the *CAIP-10 link* doctype only allows one DID as its content.
 
 ## Document update propagation
 
@@ -305,24 +297,9 @@ The main reason for having one pubsub topic that all documents are shared within
 
 A potential problem with the pubsub approach is some form of DoS. When a node makes a request for a specific document a malicious actor could send a lot of heads that do not correspond to the requested document. This would result in the requesting node having to do a lot of computation to make sure all of the received heads are in fact not correct. There are a few different way to solve this. One is to use a tit-for-tat system where nodes disconnect from nodes that send many incorrect responses. If many users do this it should effectively block malicious nodes as they start performing an attack. A different approach is to include a zero-knowledge proof in the response that proves that the CID in the message indeed does correspond to the correct document.
 
-## Ceramic services
-
-The `tile` doctype can be used to describe services that are made available though through the Ceramic network. A service provider creates a tile document that includes the description of the api that can be used to reach the service (e.g. http api, libp2p protocol, etc). The tile document may also include payment information, i.e. if some form of payment is needed in order to use the service. Ceramic enables many types of services, but the main focus of this document is the *anchor service* which is required for a ceramic node to be able to make updates a document. Please see the Ceramic [Use Cases](https://github.com/ceramicnetwork/ceramic/blob/master/OVERVIEW.md#open-web-services) for descriptions of other services.
-
-### Anchor service
-
-As mentioned in the [Blockchain anchoring](#blockchain-anchoring) section there is a need for a blockchain anchoring service that alleviates the need for users to make a blockchain transaction for each of their document updates. Instead a ceramic node can rely on an anchoring service that receives anchor requests and on a regular interval batches these requests into a single transaction. This service can be run by anyone, and it's possible to configure which anchoring service to use in the ceramic node by specifying a [Service Policy tile](./doctypes/tile.md#service-policy) in the configuration file. Different services might offer anchors to different blockchains and depending on the context one blockchain might be preferred to another.
-
-### Other services
-
-Using Ceramic [Service Policy tiles](./doctypes/tile.md#service-policy) almost any type of services can be represented. Some examples of this include Payments, Data hosting, Indexing, etc. Adding a service to ceramic allows it to be used in a user centric way. Services can be enabled per user and apps can route to different services though the users identity.
-
 ## Implementations
 
 Currently there is a partial Typescript ([js-ceramic](https://github.com/ceramicnetwork/js-ceramic)) reference implementation available. If you're interested in contributing an implementation in another language [please reach out](mailto:core@ceramic.network) and we'll help you get started!
 
-
-## Continue
-
-### [Ceramic JavaScript Client  >](https://github.com/ceramicnetwork/js-ceramic)
+### [Ceramic JavaScript Client](https://github.com/ceramicnetwork/js-ceramic)
 
